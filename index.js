@@ -13,6 +13,13 @@ app.use(express.json());
 // Routes.....................................................
 app.post("/api/auth/signup", (req, res) => {
   console.log("signup request :", req.body);
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = new User({ email: email, password: password });
+  user
+    .save()
+    .then((res) => console.log("user enregistré", res))
+    .catch(() => console.log("erreur base de données"));
   res.send({ message: "utilisateur enregistré" });
 });
 
@@ -33,3 +40,10 @@ mongoose
   .connect(uri)
   .then(() => console.log("connected to mongo!"))
   .catch(() => console.log("error connecting to mongo"));
+
+// mongoose schema............................................................
+const userSchema = new mongoose.Schema({
+  email: String,
+  password: String,
+});
+const User = mongoose.model("user", userSchema);
