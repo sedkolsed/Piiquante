@@ -23,3 +23,13 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("listening on port : " + port);
 });
+
+//Database connection with mongoose.......................................
+const mongoose = require("mongoose");
+const password = "keXYejaKahrnAlS2";
+const uri = `mongodb+srv://cedric:${password}@cluster0.t6ukz.mongodb.net/?retryWrites=true&w=majority`;
+
+mongoose
+  .connect(uri)
+  .then(() => console.log("connected to mongo!"))
+  .catch(() => console.log("error connecting to mongo"));
