@@ -1,9 +1,8 @@
-console.log("j'y comprends tout ou rien !");
-
 const express = require("express");
 const app = express();
 const port = 3000;
 const cors = require("cors");
+const { User } = require("./mongo");
 
 // Middlewares..............................................
 
@@ -23,27 +22,7 @@ app.post("/api/auth/signup", (req, res) => {
   res.send({ message: "utilisateur enregistré" });
 });
 
-app.get("/", (req, res) => {
-  res.send("coucou!");
-});
-
+// Ecoute sur le port 3000............................................
 app.listen(port, () => {
   console.log("listening on port : " + port);
 });
-
-//Database connection with mongoose.......................................
-const mongoose = require("mongoose");
-const password = "keXYejaKahrnAlS2";
-const uri = `mongodb+srv://cedric:${password}@cluster0.t6ukz.mongodb.net/?retryWrites=true&w=majority`;
-
-mongoose
-  .connect(uri)
-  .then(() => console.log("connected to mongo!"))
-  .catch(() => console.log("error connecting to mongo"));
-
-// mongoose schema............................................................
-const userSchema = new mongoose.Schema({
-  email: String,
-  password: String,
-});
-const User = mongoose.model("user", userSchema);
