@@ -13,6 +13,7 @@ app.use(express.json());
 
 // Routes.....................................................
 app.post("/api/auth/signup", createUser);
+app.post("api/auth/login", login);
 // Fonction cryptage...................................................
 function hashPassword(password) {
   const saltRounds = 10;
@@ -22,7 +23,7 @@ function hashPassword(password) {
 app.listen(port, () => {
   console.log("listening on port : " + port);
 });
-// createUser...............................................
+// Function createUser...............................................
 
 async function createUser(req, res) {
   console.log("signup request :", req.body);
@@ -39,4 +40,9 @@ async function createUser(req, res) {
     .then((res) => console.log("user enregistré", res))
     .catch(() => console.log("erreur base de données"));
   res.send({ message: "utilisateur enregistré" });
+}
+// Function login........................................................
+function login(req, res) {
+  const email = req.body.email;
+  const password = req.body.password;
 }
