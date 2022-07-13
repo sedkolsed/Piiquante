@@ -1,7 +1,8 @@
 //Database connection with mongoose.......................................
 const mongoose = require("mongoose");
-const password = "keXYejaKahrnAlS2";
-const uri = `mongodb+srv://cedric:${password}@cluster0.t6ukz.mongodb.net/?retryWrites=true&w=majority`;
+const password = process.env.DB_PASSWORD;
+const userName = process.env.DB_USERNAME;
+const uri = `mongodb+srv://${userName}:${password}@cluster0.t6ukz.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose
   .connect(uri)
