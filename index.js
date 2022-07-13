@@ -4,6 +4,7 @@ const app = express();
 const port = 3000;
 const cors = require("cors");
 const { User } = require("./mongo");
+const bcrypt = require("bcrypt");
 
 // Middlewares..............................................
 
@@ -11,24 +12,31 @@ app.use(cors());
 app.use(express.json());
 
 // Routes.....................................................
-app.post("/api/auth/signup", (req, res) => {
+app.post("/api/auth/signup", createUser);
+// Fonction cryptage...................................................
+function hashPassword(password) {
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds);
+}
+// Ecoute sur le port 3000............................................
+app.listen(port, () => {
+  console.log("listening on port : " + port);
+});
+// createUser...............................................
+
+async function createUser(req, res) {
   console.log("signup request :", req.body);
   const email = req.body.email;
   const password = req.body.password;
-  // const hashedPassword = hashPassword(password);
-  const user = new User({ email: email, password: password });
+  const hashedPassword = await hashPassword(password);
+
+  console.log("password:", password);
+  console.log("hashedPassword:", hashedPassword);
+
+  const user = new User({ email: email, password: hashedPassword });
   user
     .save()
     .then((res) => console.log("user enregistré", res))
     .catch(() => console.log("erreur base de données"));
   res.send({ message: "utilisateur enregistré" });
-});
-// Fonction cryptage...................................................
-// function hashedPassword(password) {
-//   return "pouet";
-// }
-
-// Ecoute sur le port 3000............................................
-app.listen(port, () => {
-  console.log("listening on port : " + port);
-});
+}
