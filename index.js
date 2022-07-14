@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Routes.....................................................
 app.post("/api/auth/signup", createUser);
-app.post("api/auth/login", login);
+app.post("/api/auth/login", login);
 // Fonction cryptage...................................................
 function hashPassword(password) {
   const saltRounds = 10;
@@ -37,12 +37,24 @@ async function createUser(req, res) {
   const user = new User({ email: email, password: hashedPassword });
   user
     .save()
-    .then((res) => console.log("user enregistré", res))
-    .catch(() => console.log("erreur base de données"));
-  res.send({ message: "utilisateur enregistré" });
+    .then(() => res.status(201).send({ message: "utilisateur enregistré" }))
+    .catch((err) =>
+      res.status(409).send({ message: "erreur base de données:" + err })
+    );
 }
 // Function login........................................................
-function login(req, res) {
+async function login(req, res) {
   const email = req.body.email;
   const password = req.body.password;
+  const user = await User.findOne({ email: email });
+  console.log("pass:", password);
+  const passwordStatus = await bcrypt.compare(password, user.password);
+  if (!passwordStatus) {
+    res.status(403).send({ message: "mot de passe incorrect" });
+  }
+  if (passwordStatus) {
+    res.status(200).send({ message: "connexion réussie" });
+  }
+  console.log("user:", user);
+  console.log("password status:", passwordStatus);
 }
