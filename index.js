@@ -5,6 +5,7 @@ const port = 3000;
 const cors = require("cors");
 const { User } = require("./mongo");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // Middlewares..............................................
 
@@ -44,17 +45,29 @@ async function createUser(req, res) {
 }
 // Function login........................................................
 async function login(req, res) {
-  const email = req.body.email;
-  const password = req.body.password;
-  const user = await User.findOne({ email: email });
-  console.log("pass:", password);
-  const passwordStatus = await bcrypt.compare(password, user.password);
-  if (!passwordStatus) {
-    res.status(403).send({ message: "mot de passe incorrect" });
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const user = await User.findOne({ email: email });
+    console.log("pass:", password);
+    const passwordStatus = await bcrypt.compare(password, user.password);
+    if (!passwordStatus) {
+      res.status(403).send({ message: "mot de passe incorrect" });
+    }
+    const token = createToken(email);
+    if (passwordStatus) {
+      res.status(200).send({ userId: user._id, token: token });
+    }
+    console.log("user:", user);
+    console.log("password status:", passwordStatus);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "erreur interne" });
   }
-  if (passwordStatus) {
-    res.status(200).send({ message: "connexion réussie" });
-  }
-  console.log("user:", user);
-  console.log("password status:", passwordStatus);
+}
+function createToken(email) {
+  const jwtPassword = process.env.JWT_PASSWORD;
+  const token = jwt.sign({ email: email }, jwtPassword, { expiresIn: "4H" });
+  console.log("token:", token);
+  return token;
 }
