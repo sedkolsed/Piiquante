@@ -8,7 +8,7 @@ function hashPassword(password) {
   return bcrypt.hash(password, saltRounds);
 }
 
-// Function createUser...............................................
+// Fonction createUser...............................................
 
 async function createUser(req, res) {
   console.log("signup request :", req.body);
@@ -27,7 +27,7 @@ async function createUser(req, res) {
       res.status(409).send({ message: "erreur base de données:" + err })
     );
 }
-// Function login........................................................
+// Fonction login........................................................
 async function login(req, res) {
   try {
     const email = req.body.email;
@@ -57,5 +57,5 @@ function createToken(email) {
   console.log("token:", token);
   return token;
 }
-// expartation des fonctions......................................................
+// exportation des fonctions......................................................
 module.exports = { createUser, login };

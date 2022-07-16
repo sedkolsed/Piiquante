@@ -8,7 +8,7 @@ const cors = require("cors");
 // const jwt = require("jsonwebtoken");
 const { createUser } = require("./controllers/users");
 const { login } = require("./controllers/users");
-const { getSauces } = require("./controllers/sauces");
+const { getSauces, createSauce } = require("./controllers/sauces");
 
 // Middlewares..............................................
 
@@ -19,6 +19,7 @@ app.use(express.json());
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", login);
 app.get("/api/sauces", getSauces);
+app.post("/api/sauces", createSauce);
 // // Fonction cryptage...................................................
 // function hashPassword(password) {
 //   const saltRounds = 10;
