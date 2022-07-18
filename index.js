@@ -14,12 +14,13 @@ const { getSauces, createSauce } = require("./controllers/sauces");
 
 app.use(cors());
 app.use(express.json());
+const { authentification } = require("./middleware/auth");
 
 // Routes.....................................................
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", login);
-app.get("/api/sauces", getSauces);
-app.post("/api/sauces", createSauce);
+app.get("/api/sauces", authentification, getSauces);
+app.post("/api/sauces", authentification, createSauce);
 // // Fonction cryptage...................................................
 // function hashPassword(password) {
 //   const saltRounds = 10;
