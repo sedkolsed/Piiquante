@@ -8,6 +8,7 @@ const cors = require("cors");
 const { createUser } = require("./controllers/users");
 const { login } = require("./controllers/users");
 const { getSauces, createSauce } = require("./controllers/sauces");
+const { upload } = require("./middleware/multer");
 // const path = require("path");
 
 // Middlewares..............................................
@@ -18,18 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const { authentification } = require("./middleware/auth");
-const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: "images/",
-  filename: makeFilename,
-});
-
-function makeFilename(req, file, cb) {
-  // const uniqueSuffix = Date.now + "-" + Math.round(Math.random() * 1e9);
-  cb(null, Date.now() + "-" + file.originalname);
-}
-const upload = multer({ storage: storage });
 // Routes.....................................................
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", login);
