@@ -23,24 +23,40 @@ function getSauces(req, res) {
 }
 
 function createSauce(req, res) {
-  const name = req.body.name;
-  const manufacturer = req.body.manufacturer;
+  const sauce = JSON.parse(req.body.sauce);
+  console.log("sauce: ", sauce);
+  const name = sauce.name;
+  const manufacturer = sauce.manufacturer;
+  const description = sauce.description;
+  const mainPepper = sauce.mainPepper;
+  const heat = sauce.heat;
+  const userId = sauce.userId;
+
+  console.log({ body: req.body.sauce });
+  console.log({ file: req.file });
+
+  const imageName = req.file.filename;
+  console.log("chemin:", imageName);
+  const imageUrl =
+    req.protocol + "://" + req.get("host") + "/images/" + imageName;
+  console.log(imageUrl);
 
   const product = new productUser({
-    userId: "hello",
-    name: "hello",
-    manufacturer: "hello",
-    mainPepper: "hello",
-    imageUrl: "hello",
-    heat: 333,
-    likes: 333,
-    dislikes: 333,
-    userLiked: ["hello"],
-    userDisliked: ["hello"],
+    userId: userId,
+    name: name,
+    manufacturer: manufacturer,
+    description: description,
+    mainPepper: mainPepper,
+    imageUrl: imageUrl,
+    heat: heat,
+    likes: 0,
+    dislikes: 0,
+    userLiked: [],
+    userDisliked: [],
   });
   product
     .save()
-    .then(() => console.log("produit enregistré", res))
+    .then(() => console.log("produit enregistré"))
     .catch(console.error);
 }
 
