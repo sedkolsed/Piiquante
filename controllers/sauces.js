@@ -1,3 +1,4 @@
+const { json } = require("body-parser");
 const mongoose = require("mongoose");
 
 //création du schéma de sauce.......................................
@@ -5,23 +6,38 @@ const productSchema = new mongoose.Schema({
   userId: String,
   name: String,
   manufacturer: String,
+  description: String,
   mainPepper: String,
   imageUrl: String,
   heat: Number,
   likes: Number,
   dislikes: Number,
-  userLiked: [String],
-  userDisliked: [String],
+  usersLiked: [String],
+  usersDisliked: [String],
 });
 const productUser = mongoose.model("product", productSchema);
 
 // Accès sauces.................................................
 function getSauces(req, res) {
   console.log("le token a l'air bon");
-  productUser.find({}).then((products) => res.send(products));
+  productUser.find().then((products) => res.send(products));
+
   // res.send({ message: "Array des sauces ! " });
 }
-
+// Accès à une seule sauce.....................................
+function productById(req, res) {
+  console.log("ID:", req.params);
+  const id = req.params.id;
+  console.log(id);
+  productUser
+    .findById(id)
+    .then((productUser) => {
+      console.log(productUser);
+      res.status(201).send(productUser);
+    })
+    .catch(console.error);
+}
+// Creation d'une sauce..........................................
 function createSauce(req, res) {
   const sauce = JSON.parse(req.body.sauce);
   console.log("sauce: ", sauce);
@@ -31,6 +47,7 @@ function createSauce(req, res) {
   const mainPepper = sauce.mainPepper;
   const heat = sauce.heat;
   const userId = sauce.userId;
+  console.log("alors:", description);
 
   console.log({ body: req.body.sauce });
   console.log({ file: req.file });
@@ -51,14 +68,17 @@ function createSauce(req, res) {
     heat: heat,
     likes: 0,
     dislikes: 0,
-    userLiked: [],
-    userDisliked: [],
+    usersLiked: [],
+    usersDisliked: [],
   });
   product
     .save()
-    .then(() => console.log("produit enregistré"))
+    .then((message) => {
+      res.status(201).send({ message: message });
+      return console.log("produit enregistré");
+    })
     .catch(console.error);
 }
 
 // Exportation des fonctions......................................................................
-module.exports = { getSauces, createSauce };
+module.exports = { getSauces, createSauce, productById };

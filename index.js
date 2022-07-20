@@ -7,7 +7,7 @@ const cors = require("cors");
 
 const { createUser } = require("./controllers/users");
 const { login } = require("./controllers/users");
-const { getSauces, createSauce } = require("./controllers/sauces");
+const { getSauces, createSauce, productById } = require("./controllers/sauces");
 const { upload } = require("./middleware/multer");
 // const path = require("path");
 
@@ -25,6 +25,7 @@ app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", login);
 app.get("/api/sauces", authentification, getSauces);
 app.post("/api/sauces", authentification, upload.single("image"), createSauce);
+app.get("/api/sauces/:id", authentification, productById);
 
 // Ecoute sur le port 3000............................................
 app.use("/images", express.static("images"));
