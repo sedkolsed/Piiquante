@@ -1,5 +1,6 @@
 const { json } = require("body-parser");
 const mongoose = require("mongoose");
+const { unlink } = require("fs");
 
 //création du schéma de sauce.......................................
 const productSchema = new mongoose.Schema({
@@ -20,7 +21,10 @@ const productUser = mongoose.model("product", productSchema);
 // Accès sauces.................................................
 function getSauces(req, res) {
   console.log("le token a l'air bon");
-  productUser.find().then((products) => res.send(products));
+  productUser
+    .find()
+    .then((products) => res.send(products))
+    .catch((error) => res.status(500).send(error));
 
   // res.send({ message: "Array des sauces ! " });
 }
@@ -79,6 +83,26 @@ function createSauce(req, res) {
     })
     .catch(console.error);
 }
+// Supression d'une sauce...................................................
+function deleteSauce(req, res) {
+  const id = req.params.id;
+  console.log(id);
+  productUser
+    .findByIdAndDelete(id)
+    .then((product) => deleteImage(product))
+    .then((product) => res.send({ message: "produit supprimé" }))
+    .catch(console.error);
+}
+
+// Supression de l'image locale.....................
+function deleteImage(product) {
+  const imageUrl = product.imageUrl;
+  const fileToDelete = imageUrl.split("/").at(-1);
+  unlink(`images/${fileToDelete}`, (err) => {
+    console.error("Problème suppression image", err);
+  });
+  return product;
+}
 
 // Exportation des fonctions......................................................................
-module.exports = { getSauces, createSauce, productById };
+module.exports = { getSauces, createSauce, productById, deleteSauce };
