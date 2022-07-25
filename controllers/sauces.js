@@ -121,16 +121,23 @@ function modifySauce(req, res) {
     .then((result) => {
       if (result != null) {
         console.log("update ok: ", res);
-        res.status(200).send({ message: "update ok" });
+        return Promise.resolve(
+          res.status(200).send({ message: "update ok" })
+        ).then(() => result);
       } else {
         console.log({ message: "nothing to update" });
         res.status(400).send({ message: "nothing to update" });
       }
     })
+    .then((result) => deleteOldImage(result))
 
     .catch((err) => console.error("update problem", err));
 }
-
+function deleteOldImage(result) {
+  if (result == null) return;
+  console.log("..............................", result);
+  deleteImage(result);
+}
 // fonction payload..........................................................
 
 function makePayload(hasNewImage, req) {
