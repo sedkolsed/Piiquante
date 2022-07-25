@@ -12,6 +12,7 @@ const {
   createSauce,
   productById,
   deleteSauce,
+  modifySauce,
 } = require("./controllers/sauces");
 const { upload } = require("./middleware/multer");
 // const path = require("path");
@@ -32,6 +33,12 @@ app.get("/api/sauces", authentification, getSauces);
 app.post("/api/sauces", authentification, upload.single("image"), createSauce);
 app.get("/api/sauces/:id", authentification, productById);
 app.delete("/api/sauces/:id", authentification, deleteSauce);
+app.put(
+  "/api/sauces/:id",
+  authentification,
+  upload.single("image"),
+  modifySauce
+);
 
 // Ecoute sur le port 3000............................................
 app.use("/images", express.static("images"));

@@ -1,6 +1,7 @@
 const { json } = require("body-parser");
 const mongoose = require("mongoose");
 const { unlink } = require("fs");
+const { log } = require("console");
 
 //création du schéma de sauce.......................................
 const productSchema = new mongoose.Schema({
@@ -103,6 +104,40 @@ function deleteImage(product) {
   });
   return product;
 }
+// Modification de la sauce..............................................
+function modifySauce(req, res) {
+  const id = req.params.id;
+  const body = req.body;
+
+  console.log(id);
+
+  // const name = sauce.name;
+  // const manufacturer = sauce.manufacturer;
+  // const description = sauce.description;
+  // const mainPepper = sauce.mainPepper;
+  // const heat = sauce.heat;
+  // const userId = sauce.userId;
+
+  productUser
+    .findByIdAndUpdate(id, body)
+    .then((result) => {
+      if (result != null) {
+        console.log("update ok: ", res);
+        res.status(200).send({ message: "update ok" });
+      } else {
+        console.log({ message: "nothing to update" });
+        res.status(400).send({ message: "nothing to update" });
+      }
+    })
+
+    .catch((err) => console.error("update problem", err));
+}
 
 // Exportation des fonctions......................................................................
-module.exports = { getSauces, createSauce, productById, deleteSauce };
+module.exports = {
+  getSauces,
+  createSauce,
+  productById,
+  deleteSauce,
+  modifySauce,
+};
