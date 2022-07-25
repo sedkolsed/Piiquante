@@ -107,19 +107,17 @@ function deleteImage(product) {
 // Modification de la sauce..............................................
 function modifySauce(req, res) {
   const id = req.params.id;
-  const body = req.body;
+  // const body = req.body;
+
+  console.log("file:", req.file);
 
   console.log(id);
 
-  // const name = sauce.name;
-  // const manufacturer = sauce.manufacturer;
-  // const description = sauce.description;
-  // const mainPepper = sauce.mainPepper;
-  // const heat = sauce.heat;
-  // const userId = sauce.userId;
+  const hasNewImage = req.file != null;
+  const payload = makePayload(hasNewImage, req);
 
   productUser
-    .findByIdAndUpdate(id, body)
+    .findByIdAndUpdate(id, payload)
     .then((result) => {
       if (result != null) {
         console.log("update ok: ", res);
@@ -131,6 +129,19 @@ function modifySauce(req, res) {
     })
 
     .catch((err) => console.error("update problem", err));
+}
+
+// fonction payload..........................................................
+
+function makePayload(hasNewImage, req) {
+  if (!hasNewImage) return req.body;
+  const payload = JSON.parse(req.body.sauce);
+  payload.imageUrl = makeImageUrl(req, req.file.filename);
+  return payload;
+}
+
+function makeImageUrl(req, filename) {
+  return req.protocol + "://" + req.get("host") + "/images/" + filename;
 }
 
 // Exportation des fonctions......................................................................
