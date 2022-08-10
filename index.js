@@ -7,8 +7,6 @@ const app = express();
 const port = 3000;
 const cors = require("cors");
 
-// const path = require("path");
-
 // Middlewares..............................................
 
 app.use(cors());

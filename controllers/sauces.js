@@ -26,10 +26,9 @@ function getSauces(req, res) {
     .find()
     .then((products) => res.send(products))
     .catch((error) => res.status(500).send(error));
-
-  // res.send({ message: "Array des sauces ! " });
 }
 // Accès à une seule sauce.....................................
+
 function productById(req, res) {
   console.log("ID:", req.params);
   const id = req.params.id;
@@ -107,7 +106,6 @@ function deleteImage(product) {
 // Modification de la sauce..............................................
 function modifySauce(req, res) {
   const id = req.params.id;
-  // const body = req.body;
 
   console.log("file:", req.file);
 
@@ -151,6 +149,115 @@ function makeImageUrl(req, filename) {
   return req.protocol + "://" + req.get("host") + "/images/" + filename;
 }
 
+// gestion des likes........................................................
+
+function likeSauce(req, res) {
+  const idProduct = req.params.id;
+  const like = req.body.like;
+  const userId = req.body.userId;
+  if (![0, -1, 1].includes(like))
+    return res.status(400).send({ message: " bad request ! " });
+  console.log("log....", userId);
+  console.log("log id..........", idProduct);
+  console.log("log like..........", like);
+  productUser
+    .findById(idProduct)
+    .then((product) => updateLike(product, like, userId, res))
+    .catch((err) => console.error(err));
+}
+// Gestion des cas possibles................................................
+function updateLike(product, like, userId, res) {
+  if (like === 1) {
+    incrementLike(product, userId);
+  }
+  if (like === -1) {
+    decrementLike(product, userId);
+  }
+  if (like === 0) {
+    resetlike(product, userId);
+  }
+
+  product
+    .save()
+    .then(() => res.send({ message: "mise à jour des likes" }))
+    .catch((err) => console.error(err));
+}
+
+// Gestion de l'avis positif.............................................
+
+function incrementLike(product, userId) {
+  const usersLiked = product.usersLiked;
+  const usersDisliked = product.usersDisliked;
+
+  const indexDislike = usersDisliked.indexOf(userId);
+  const indexLike = usersLiked.indexOf(userId);
+  console.log("...........:", indexLike);
+
+  if (indexLike == -1) {
+    if (indexDislike == -1) {
+      usersLiked.push(userId);
+      console.log(product.likes);
+      product.likes++;
+    } else {
+      usersDisliked.splice(indexDislike, 1);
+      usersLiked.push(userId);
+      product.dislikes--;
+      product.likes++;
+    }
+  }
+
+  return;
+}
+
+// Gestion de l'avis négatif.......................................
+
+function decrementLike(product, userId) {
+  const usersLiked = product.usersLiked;
+  const usersDisliked = product.usersDisliked;
+
+  const indexDislike = usersDisliked.indexOf(userId);
+  const indexLike = usersLiked.indexOf(userId);
+
+  if (indexLike == -1) {
+    if (indexDislike == -1) {
+      usersDisliked.push(userId);
+      console.log(product.likes);
+      product.dislikes++;
+    }
+  } else {
+    usersLiked.splice(indexLike, 1);
+    usersDisliked.push(userId);
+    product.dislikes++;
+    product.likes--;
+  }
+
+  return;
+}
+
+// Gestion de l'avis neutre...............................................
+
+function resetlike(product, userId) {
+  const usersLiked = product.usersLiked;
+  const usersDisliked = product.usersDisliked;
+
+  const indexDislike = usersDisliked.indexOf(userId);
+  const indexLike = usersLiked.indexOf(userId);
+
+  if (indexLike == -1) {
+    if (indexDislike != -1) {
+      usersDisliked.splice(indexDislike, 1);
+
+      product.dislikes--;
+    }
+  } else {
+    usersLiked.splice(indexLike, 1);
+
+    product.likes--;
+  }
+
+  return;
+}
+
 // Exportation des fonctions......................................................................
 module.exports = {
   getSauces,
@@ -158,4 +265,5 @@ module.exports = {
   productById,
   deleteSauce,
   modifySauce,
+  likeSauce,
 };

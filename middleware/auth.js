@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
+
 // fonction d'authentification............................................
+
 function authentification(req, res, next) {
   const header = req.header("authorization");
   const token = header.split(" ")[1];
@@ -13,9 +15,8 @@ function authentification(req, res, next) {
       return res.status(403).send({ message: "token invalide : " + err });
     next();
   });
-  //   res.send({ message: "ok" });
+
   console.log("token:", token);
-  //   console.log("decoded :", decoded);
 }
 // Exportation des fonctions......................................................................
 module.exports = { authentification };

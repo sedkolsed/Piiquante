@@ -8,6 +8,7 @@ const {
   productById,
   deleteSauce,
   modifySauce,
+  likeSauce,
 } = require("../controllers/sauces");
 
 const { upload } = require("../middleware/multer");
@@ -22,5 +23,6 @@ productsRouter.put(
   upload.single("image"),
   modifySauce
 );
+productsRouter.post("/:id/like", authentification, likeSauce);
 
 module.exports = { productsRouter };

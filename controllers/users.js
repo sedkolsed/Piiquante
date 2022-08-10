@@ -1,8 +1,9 @@
 const { User } = require("../mongo");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// require("dotenv").config();
+
 // Fonction cryptage...................................................
+
 function hashPassword(password) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds);
@@ -28,6 +29,7 @@ async function createUser(req, res) {
     );
 }
 // Fonction login........................................................
+
 async function login(req, res) {
   try {
     const email = req.body.email;
@@ -51,6 +53,7 @@ async function login(req, res) {
   }
 }
 // création du token............................................................
+
 function createToken(email) {
   const jwtPassword = process.env.JWT_PASSWORD;
   const token = jwt.sign({ email: email }, jwtPassword, { expiresIn: "4H" });
